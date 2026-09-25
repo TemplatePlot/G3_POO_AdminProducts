@@ -1,0 +1,87 @@
+//El código presente...
+
+namespace PlaceholderNamespace
+{
+    internal class Nodo
+    {
+        // datos que interactuaremos en pantalla
+        private string Producto;
+        private string Codigo;
+        private int CantidadDisponible;
+        private double CostoLote;
+        private int CantidadVendida;
+
+        // nodos que usaremos  en programa
+        private Nodo siguiente;
+        private Nodo anterior;
+
+        //encapsular campos que interactuamos 
+        public string Producto1 { get => Producto; set => Producto = value; }
+        public string Codigo1 { get => Codigo; set => Codigo = value; }
+        public int CantidadDisponible1 { get => CantidadDisponible; set => CantidadDisponible = value; }
+        public double CostoLote1 { get => CostoLote; set => CostoLote = value; }
+        public int CantidadVendida1 { get => CantidadVendida; set => CantidadVendida = value; }
+
+        // encapsular campos de los nodos
+        internal Nodo Siguiente { get => siguiente; set => siguiente = value; }
+        internal Nodo Anterior { get => anterior; set => anterior = value; }
+
+        // datos interiores de la pantalla
+
+        // calcula costo unitario
+        public double CostoUnitario
+        {
+            get
+            {
+                if (CantidadDisponible > 0)
+                {
+                    return CostoLote / CantidadDisponible; // Si es verdadero
+                }
+                else
+                {
+                    return 0; // Si es falso
+                }
+            }
+        }
+
+        // calcula Precio Unitario
+        public double PrecioUnitario
+        {
+            get { return CostoUnitario * 1.5; }
+        }
+
+        // Calcula el stock final
+        public int StockFinal
+        {
+            get { return CantidadDisponible - CantidadVendida; }
+        }
+
+        //calcula ingreso bruto
+        // calcula ingreso bruto REAL (por lo que se ha vendido)
+        public double Ingreso1
+        {
+            get { return CantidadVendida * PrecioUnitario; }
+        }
+
+        // calcula ingreso neto REAL (ganancia real de lo vendido)
+        public double IngresoFinal
+        {
+            get { return Ingreso1 - (CantidadVendida * CostoUnitario); }
+        }
+
+        //contructores
+        public Nodo(string prod, string cod, int cantD, double costL, int cantV)
+        {
+            // contructores  datos usaremos
+            Producto = prod;
+            Codigo = cod;
+            CantidadDisponible = cantD;
+            CostoLote = costL;
+            CantidadVendida = cantV;
+
+            //contructores nodos usaremos
+            Siguiente = null;
+            Anterior = null;
+        }
+    }
+}
