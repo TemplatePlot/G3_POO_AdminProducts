@@ -12,3 +12,5 @@ Actualmente, el control de la mercancía en tienda depende en gran medida de la 
 Nuestro código busca facilitar el control de inventario, diseñado específicamente para optimizar la logística en bodegas. Su objetivo central es agilizar el registro de entradas y salidas de mercancía, minimizando errores manuales y garantizando una administración de tienda eficiente, precisa y con datos actualizados.
 
 Nuestro código busca facilitar el control de inventario, diseñado específicamente para optimizar la logística en bodegas. Su objetivo central es agilizar el registro de entradas y salidas de mercancía, minimizando errores manuales y garantizando una administración de tienda eficiente, precisa y con datos actualizados.
+
+El código Presenta uso de principios de listas dobles con atributos específicos para los ítems registrados, afectando así al registro final de la bitácora.
