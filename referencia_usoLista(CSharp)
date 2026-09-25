@@ -1,0 +1,152 @@
+//El archivo presente es un bosquejo del uso de listas dobles escrito en C$ para manejo simplificado, posteriormente será adaptado a Java para su implementación en el programa final
+//El código a continuación es de mi autoría
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PlaceholderNamespace
+{
+    internal class Lista_Doble
+    { 
+        //Nuevos nodos que usaremos
+        public Nodo primero;
+        public Nodo ultimo;
+
+        // contructores de los nuevos nodos
+        public Lista_Doble()
+        {
+            primero = null;
+            ultimo = null;
+        }
+        //  Para insertar nuevos nodos al final de la lista
+        public void Insertar(Nodo nuevo)
+        {
+            if (primero == null)
+            {
+                primero = nuevo;
+                primero.Siguiente = null;
+                primero.Anterior = null;
+                ultimo = nuevo;
+            }
+            else
+            {
+                ultimo.Siguiente = nuevo;
+                nuevo.Siguiente = null;
+                nuevo.Anterior = ultimo;
+                ultimo = nuevo;
+            }
+        }
+        // Para no permitir porner el codigo existente con otro producto
+        public Nodo BuscarCodigo(string codigo)
+        {
+            Nodo actual = primero;
+            while (actual != null)
+            {
+                if (actual.Codigo1.Equals(codigo, StringComparison.OrdinalIgnoreCase))
+                {
+                    return actual; // Encontro el codigo 
+                }
+                actual = actual.Siguiente;
+            }
+            return null; // No encontro dicho codigo puede seguir
+        }
+        // Para boton buscar el producto o codigo
+        public Nodo BuscarCodigoProducto(string CP)
+        {
+            Nodo actual = primero;
+            while (actual != null)
+            {
+                // Busca si hay el codigo o hay el producto
+                if (actual.Codigo1.Equals(CP, StringComparison.OrdinalIgnoreCase) ||
+                    actual.Producto1.Equals(CP, StringComparison.OrdinalIgnoreCase))
+                {
+                    return actual; // encontro el codigo o el producto
+                }
+                actual = actual.Siguiente;
+            }
+            return null; // no encontro ningun  codigo o producto
+        }
+
+        // Para eliminar uno de los productos existentes
+        public bool Eliminar(string EProducto)
+        {
+            Nodo actual = primero;
+
+            // Recorremos la lista buscando el producto
+            while (actual != null)
+            {
+                if (actual.Producto1.Equals(EProducto, StringComparison.OrdinalIgnoreCase))
+                {
+                    // caso 1: El nodo a eliminar el primero
+                    if (actual == primero)
+                    {
+                        primero = actual.Siguiente;
+                        if (primero != null)
+                        {
+                            primero.Anterior = null;
+                        }
+                        else
+                        {
+                            ultimo = null; // La lista se quedó vacía
+                        }
+                    }
+                    // caso 2: El nodo a eliminar es el ultimo
+                    else if (actual == ultimo)
+                    {
+                        ultimo = actual.Anterior;
+                        if (ultimo != null)
+                        {
+                            ultimo.Siguiente = null;
+                        }
+                    }
+                    // caso 3: El nodo está en medio de la lista
+                    else
+                    {
+                        actual.Anterior.Siguiente = actual.Siguiente;
+                        actual.Siguiente.Anterior = actual.Anterior;
+                    }
+
+                    // Aislamos el nodo eliminado por completo
+                    actual.Siguiente = null;
+                    actual.Anterior = null;
+
+                    return true; // Pudimos elimiar el elemento
+                }
+                actual = actual.Siguiente;
+            }
+
+            return false; // No se encontró el producto a eliminar
+        }
+
+        // calcula todos los ingresos brutos obtenidas
+        public double IngresoTotal()
+        {
+            double total = 0;
+            Nodo actual = primero;
+            while (actual != null)
+            {
+                //suma todos los ingresos brutos
+                total += actual.Ingreso1;
+                actual = actual.Siguiente;
+            }
+            return total;
+        }
+
+        // calcula de todas las ganancias netas obtenidas
+        public double GananciaTotal()
+        {
+            double total = 0;
+            Nodo actual = primero;
+            while (actual != null)
+            {
+                //Suma todos los ingresos ganancia
+                total += actual.IngresoFinal;
+                actual = actual.Siguiente;
+            }
+            return total;
+        }
+    }
+}
