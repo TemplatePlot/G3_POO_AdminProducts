@@ -17,9 +17,8 @@ import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.Font;
 
-
 public class MainWindow extends JFrame {
-		
+
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 
@@ -45,16 +44,16 @@ public class MainWindow extends JFrame {
 	public MainWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 522, 355);
-		
-		MAINW Prods = new MAINW(this);
-		
-		
+
+		MAINW Prods = new MAINW();
+		Compras Comp = new Compras(Prods.getLista());
+
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
-		
+
 		JMenu mnNewMenu = new JMenu("Ventanas");
 		menuBar.add(mnNewMenu);
-		
+
 		JMenuItem mntmNewMenuItem = new JMenuItem("Productos");
 		mntmNewMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -62,28 +61,31 @@ public class MainWindow extends JFrame {
 			}
 		});
 		mnNewMenu.add(mntmNewMenuItem);
-		
+
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Compra");
+		mntmNewMenuItem_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				nuevoPanel(Comp);
+			}
+		});
 		mnNewMenu.add(mntmNewMenuItem_1);
-		
+
 		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Ganancias");
 		mnNewMenu.add(mntmNewMenuItem_2);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
-		
+
 		JLabel lblBienvenida = new JLabel("Bienvenido a Admin Products");
 		lblBienvenida.setFont(new Font("Tahoma", Font.BOLD, 18));
 		lblBienvenida.setForeground(new Color(0, 0, 128));
 		lblBienvenida.setBounds(134, 11, 281, 14);
 		contentPane.add(lblBienvenida);
-		
-		
+
 		JButton btnInventario = new JButton("");
 		btnInventario.setBounds(102, 163, 94, 64);
-		ImageIcon iconoInventario = new ImageIcon(getClass().getResource("/caja.png"));
+		ImageIcon iconoInventario = new ImageIcon(getClass().getResource("/Imagenes/caja.png"));
 		Image imagenEscalada = iconoInventario.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 		btnInventario.setIcon(new ImageIcon(imagenEscalada));
 		btnInventario.setBorderPainted(false);
@@ -91,16 +93,23 @@ public class MainWindow extends JFrame {
 		btnInventario.setContentAreaFilled(false);
 		btnInventario.setOpaque(false);
 		contentPane.add(btnInventario);
-		
+
 		btnInventario.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        System.out.println("Botón Inventario presionado");
-		    }
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Botón Inventario presionado");
+				nuevoPanel(Prods);
+			}
 		});
-		
+
 		JButton btnCompras = new JButton("");
+		btnCompras.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Botón Compras presionado");
+				nuevoPanel(Comp);
+			}
+		});
 		btnCompras.setBounds(194, 163, 94, 64);
-		ImageIcon iconocompras = new ImageIcon(getClass().getResource("/carro.png"));
+		ImageIcon iconocompras = new ImageIcon(getClass().getResource("/Imagenes/carro.png"));
 		Image imagenCompras = iconocompras.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 		btnCompras.setIcon(new ImageIcon(imagenCompras));
 		btnCompras.setBorderPainted(false);
@@ -108,10 +117,10 @@ public class MainWindow extends JFrame {
 		btnCompras.setContentAreaFilled(false);
 		btnCompras.setOpaque(false);
 		contentPane.add(btnCompras);
-		
+
 		JButton btnIngresos = new JButton("");
 		btnIngresos.setBounds(297, 163, 94, 64);
-		ImageIcon iconoingresos = new ImageIcon(getClass().getResource("/ingresos.png"));
+		ImageIcon iconoingresos = new ImageIcon(getClass().getResource("/Imagenes/ingresos.png"));
 		Image imageningresos = iconoingresos.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 		btnIngresos.setIcon(new ImageIcon(imageningresos));
 		btnIngresos.setBorderPainted(false);
@@ -119,47 +128,40 @@ public class MainWindow extends JFrame {
 		btnIngresos.setContentAreaFilled(false);
 		btnIngresos.setOpaque(false);
 		contentPane.add(btnIngresos);
-		
-		
+
 		JLabel lblNewLabel = new JLabel("INVENTARIO");
 		lblNewLabel.setForeground(new Color(0, 0, 128));
 		lblNewLabel.setBounds(117, 225, 76, 14);
 		contentPane.add(lblNewLabel);
-		
+
 		JLabel lblCompras = new JLabel("COMPRAS");
 		lblCompras.setForeground(new Color(0, 0, 128));
 		lblCompras.setBounds(215, 225, 76, 14);
 		contentPane.add(lblCompras);
-		
+
 		JLabel lblIngresos = new JLabel("INGRESOS");
 		lblIngresos.setForeground(new Color(0, 0, 128));
 		lblIngresos.setBounds(315, 225, 76, 14);
 		contentPane.add(lblIngresos);
-		
+
 		JLabel lblNewLabel_1 = new JLabel("SISTEMA DE GESTION Y VENTAS");
 		lblNewLabel_1.setForeground(new Color(0, 0, 128));
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 14));
 		lblNewLabel_1.setBounds(153, 54, 294, 14);
 		contentPane.add(lblNewLabel_1);
-		
-		
+
 		JLabel lblBackground = new JLabel("");
 		lblBackground.setBounds(0, 0, 506, 294);
-		ImageIcon icon = new ImageIcon("imagenes/mainbackground.png");
-		Image imagen = icon.getImage().getScaledInstance(506,294,Image.SCALE_SMOOTH);
+		ImageIcon icon = new ImageIcon("/Imagenes/mainbackground.png");
+		Image imagen = icon.getImage().getScaledInstance(506, 294, Image.SCALE_SMOOTH);
 		lblBackground.setIcon(new ImageIcon(imagen));
 		contentPane.add(lblBackground);
-		
-
-
-		
-
-
 
 	}
-	
-	private void nuevoPanel (JPanel panelAct) {
+
+	private void nuevoPanel(JPanel panelAct) {
 		contentPane.removeAll();
+		panelAct.setBounds(0, 0, contentPane.getWidth(), contentPane.getHeight());
 		contentPane.add(panelAct);
 		contentPane.repaint();
 		contentPane.revalidate();
