@@ -16,6 +16,7 @@ import java.awt.Image;
 import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.BorderLayout;
 
 public class MainWindow extends JFrame {
 
@@ -44,10 +45,10 @@ public class MainWindow extends JFrame {
 	public MainWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 522, 355);
-
 		MAINW Prods = new MAINW();
 		Compras Comp = new Compras(Prods.getLista());
-
+		Prods.setCompras(Comp);
+		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 
@@ -72,10 +73,18 @@ public class MainWindow extends JFrame {
 
 		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Ganancias");
 		mnNewMenu.add(mntmNewMenuItem_2);
+		
+		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Ventana principal");
+		mntmNewMenuItem_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				nuevoPanel(contentPane);
+			}
+		});
+		mnNewMenu.add(mntmNewMenuItem_3);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		nuevoPanel(contentPane);
 
 		JLabel lblBienvenida = new JLabel("Bienvenido a Admin Products");
 		lblBienvenida.setFont(new Font("Tahoma", Font.BOLD, 18));
@@ -150,20 +159,15 @@ public class MainWindow extends JFrame {
 		lblNewLabel_1.setBounds(153, 54, 294, 14);
 		contentPane.add(lblNewLabel_1);
 
-		JLabel lblBackground = new JLabel("");
-		lblBackground.setBounds(0, 0, 506, 294);
-		ImageIcon icon = new ImageIcon("/Imagenes/mainbackground.png");
-		Image imagen = icon.getImage().getScaledInstance(506, 294, Image.SCALE_SMOOTH);
-		lblBackground.setIcon(new ImageIcon(imagen));
-		contentPane.add(lblBackground);
+		
 
 	}
 
 	private void nuevoPanel(JPanel panelAct) {
-		contentPane.removeAll();
-		panelAct.setBounds(0, 0, contentPane.getWidth(), contentPane.getHeight());
-		contentPane.add(panelAct);
-		contentPane.repaint();
-		contentPane.revalidate();
+		   getContentPane().removeAll();
+		   getContentPane().add(panelAct, BorderLayout.CENTER);
+		   getContentPane().revalidate();
+		   getContentPane().repaint();
 	}
+	
 }

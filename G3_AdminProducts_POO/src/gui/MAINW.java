@@ -3,14 +3,22 @@ package gui;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import java.util.ArrayList;
 import javax.swing.JTextArea;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
+import java.awt.Font;
 
 public class MAINW extends JPanel implements ActionListener {
 
@@ -22,6 +30,67 @@ public class MAINW extends JPanel implements ActionListener {
 	private JTextArea textArea;
 	private JComboBox<String> comboSelect;
 	private ArrayList<Products> lista = new ArrayList<>();
+	private JTextField txtCosto;
+	private Compras compras;
+	  private File archivoActual = null;
+	
+	  private void guardarProductos() {
+		   	JFileChooser chooser = new JFileChooser();
+		   	chooser.setDialogTitle("Guardar lista de productos");
+		   	chooser.setSelectedFile(new File("productos.txt"));
+		   	if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
+
+		   	File destino = chooser.getSelectedFile();
+		   	if (destino.exists()) {
+		   		int r = JOptionPane.showConfirmDialog(this,
+		   				"El archivo ya existe. ¿Desea sobrescribirlo?",
+		   				"Confirmar", JOptionPane.YES_NO_OPTION);
+		   		if (r != JOptionPane.YES_OPTION) return;
+		   	}
+
+		   	try (PrintWriter pw = new PrintWriter(destino)) {
+		   		for (Products p : lista) {
+		   			pw.println(p.getId() + ";" + p.getProd() + ";" + p.getTipo() + ";"
+		   					+ p.getStock() + ";" + p.getPrec() + ";" + p.getCosto());
+		   		}
+		   		archivoActual = destino;
+		   		textArea.setText("Lista guardada en " + destino.getAbsolutePath() + " (" + lista.size() + " registros).\n");
+		   	} catch (IOException ex) {
+		   		textArea.setText("Error al guardar: " + ex.getMessage() + "\n");
+		   	}
+		   }
+	   private void cargarProductos() {
+		   	JFileChooser chooser = new JFileChooser();
+		   	chooser.setDialogTitle("Cargar lista de productos");
+		   	if (chooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
+
+		   	File origen = chooser.getSelectedFile();
+		   	if (!origen.exists()) {
+		   		textArea.setText("El archivo seleccionado no existe.\n");
+		   		return;
+		   	}
+
+		   	ArrayList<Products> cargada = new ArrayList<>();
+		   	try (BufferedReader br = new BufferedReader(new FileReader(origen))) {
+		   		String linea;
+		   		while ((linea = br.readLine()) != null) {
+		   			if (linea.trim().isEmpty()) continue;
+		   			String[] d = linea.split(";");
+		   			cargada.add(new Products(d[0], d[1], d[2],
+		   					Integer.parseInt(d[3]), Double.parseDouble(d[4]), Double.parseDouble(d[5])));
+		   		}
+		   	} catch (IOException | NumberFormatException | ArrayIndexOutOfBoundsException ex) {
+		   		textArea.setText("Error al cargar: el archivo tiene un formato inválido.\n");
+		   		return;
+		   	}
+
+		   	lista.clear();
+		   	lista.addAll(cargada);
+		    if (compras != null) compras.vaciarCanasta();
+		   	archivoActual = origen;
+		   	mostrarLista();
+		   	textArea.append("\nCargada: " + origen.getName() + " (" + lista.size() + " productos).\n");
+		   }
 	
 	public ArrayList<Products> getLista() { // Permite vincular datos para ser usados en otras ventanas como Compras
 		return lista;
@@ -30,10 +99,10 @@ public class MAINW extends JPanel implements ActionListener {
 	 * Create the panel.
 	 */
 	public MAINW() {
+		
 		// Constructor + ventana absoluta jframe
 
-		setBounds(0, 0, 450, 300);
-
+		
 		{
 			setLayout(null);
 			setLayout(null);
@@ -96,28 +165,19 @@ public class MAINW extends JPanel implements ActionListener {
 					String tipo = comboSelect.getSelectedItem().toString();
 					double precio = Double.parseDouble(txtPrecio.getText().trim());
 					int stock = Integer.parseInt(txtStock.getText().trim());
-
-					Products p = new Products(id, prod, tipo, stock, precio);
+					double costo = Double.parseDouble(txtCosto.getText().trim());
+					Products p = new Products(id, prod, tipo, stock, precio,costo);
 					lista.add(p);
-					textArea.setText("--- Lista de Productos Actualizada ---\n");
-					for (Products p1 : lista) {
-						textArea.append("ID: " + p1.getId() + " | Producto: " + p1.getProd() + " | Tipo: "
-								+ p1.getTipo() + " | Precio: " + p1.getPrec() + " | Stock: " + p1.getStock() + "\n");
-					}
-					txtId.setText("");
-					txtProd.setText("");
-					txtPrecio.setText("");
-					txtStock.setText("");
-					comboSelect.setSelectedIndex(0);
+					mostrarLista();
+					limpiarCampos();
 
 				} catch (NumberFormatException ex) {
-					textArea.setText("Error: ID, Precio y Stock deben ser numéricos.\n");
+					textArea.setText("Error: Precio Venta, Costo de compra y Stock deben ser numéricos.\n");
 				}
 			}
 		});
-		btnInsertar.setBounds(213, 22, 84, 20);
+		btnInsertar.setBounds(314, 26, 84, 20);
 		add(btnInsertar);
-
 		JButton btnModificar = new JButton("Modificar");
 		btnModificar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -141,12 +201,14 @@ public class MAINW extends JPanel implements ActionListener {
 							String nuevoTipo = comboSelect.getSelectedItem().toString();
 							double nuevoPrecio = Double.parseDouble(txtPrecio.getText().trim());
 							int nuevoStock = Integer.parseInt(txtStock.getText().trim());
+							double nuevoCosto = Double.parseDouble(txtCosto.getText().trim());
 
 							// Modifica los atributos del objeto
 							p.setProd(nuevoProd);
 							p.setTipo(nuevoTipo);
 							p.setPrec(nuevoPrecio);
 							p.setStock(nuevoStock);
+							p.setCosto(nuevoCosto);
 
 							encontrado = true;
 							break; // Sale del ciclo ya que encontramos el producto
@@ -154,43 +216,71 @@ public class MAINW extends JPanel implements ActionListener {
 					}
 
 					if (encontrado) {
-						// Limpiam el texto anterior
-						textArea.setText("--- Lista de Productos Actualizada ---\n");
-						for (Products p : lista) {
-							textArea.append("ID: " + p.getId() + " | Producto: " + p.getProd() + " | Tipo: "
-									+ p.getTipo() + " | Precio: " + p.getPrec() + " | Stock: " + p.getStock() + "\n");
-						}
-
-						// Limpia campos de texto
-						txtId.setText("");
-						txtProd.setText("");
-						txtPrecio.setText("");
-						txtStock.setText("");
-						comboSelect.setSelectedIndex(0);
+						mostrarLista();
+						limpiarCampos();
 
 					} else {
 						textArea.setText("Error: No se encontró ningún producto con el ID: " + idBuscar + "\n");
 					}
 
 				} catch (NumberFormatException ex) {
-					textArea.setText("Error: Al modificar, Precio y Stock deben ser numéricos.\n");
+					textArea.setText("Error: Al modificar, Precio Venta, Costo de compra y Stock deben ser numéricos.\n");
 				}
 			}
 		});
-		btnModificar.setBounds(213, 44, 84, 20);
+		btnModificar.setBounds(314, 48, 84, 20);
 		add(btnModificar);
 
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnEliminar.setBounds(213, 66, 84, 20);
+				String idEliminar = txtId.getText().trim();
+
+				if (idEliminar.isEmpty()) {
+					textArea.setText("Error: Digite el ID del producto que desea eliminar.\n");
+					return;
+				}
+
+				Products encontrado = null;
+				for (Products p : lista) {
+					if (p.getId().equals(idEliminar)) {
+						encontrado = p;
+						break;
+					}
+				}
+
+				if (encontrado == null) {
+					textArea.setText("Error: No se encontró ningún producto con el ID: " + idEliminar + "\n");
+					return;
+				}
+
+				int confirmar = JOptionPane.showConfirmDialog(
+						MAINW.this,
+						"¿Seguro que desea eliminar el producto?\n"
+								+ "ID: " + encontrado.getId() + "\n"
+								+ "Producto: " + encontrado.getProd(),
+						"Confirmar eliminación",
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.WARNING_MESSAGE);
+
+				if (confirmar != JOptionPane.YES_OPTION) {
+					textArea.setText("Eliminación cancelada.\n");
+					return;
+				}
+
+				lista.remove(encontrado);
+
+				mostrarLista();
+				limpiarCampos();
+			}});	
+			
+		btnEliminar.setBounds(314, 70, 84, 20);
 		add(btnEliminar);
 
 		textArea = new JTextArea();
+		textArea.setFont(new Font("Monospaced", Font.PLAIN, 11));
 		textArea.setEditable(false);
-		textArea.setBounds(26, 146, 405, 143);
+		textArea.setBounds(26, 146, 470, 120);
 		add(textArea);
 
 		comboSelect = new JComboBox<String>();
@@ -206,18 +296,60 @@ public class MAINW extends JPanel implements ActionListener {
 		JButton btnActualizar = new JButton("Actualizar Datos");
 		btnActualizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				textArea.setText("--- Lista de Productos Actualizada ---\n");
-				for (Products p : lista) {
-					textArea.append("ID: " + p.getId() + " | Producto: " + p.getProd() + " | Tipo: "
-							+ p.getTipo() + " | Precio: " + p.getPrec() + " | Stock: " + p.getStock() + "\n");
-				}
+				mostrarLista();
 			}
 		});
 		btnActualizar.setBounds(314, 115, 117, 20);
 		add(btnActualizar);
+		
+		JLabel lblNewLabel_2_2 = new JLabel("Costo");
+		lblNewLabel_2_2.setBounds(201, 26, 44, 12);
+		add(lblNewLabel_2_2);
+		
+		txtCosto = new JTextField();
+		txtCosto.setColumns(10);
+		txtCosto.setBounds(201, 42, 96, 18);
+		add(txtCosto);
+		
+		JButton btnGuardar = new JButton("Guardar");
+		btnGuardar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				guardarProductos();
+			}
+		});
+	    btnGuardar.setBounds(26, 275, 84, 20);
+		add(btnGuardar);
+		
+		JButton btnCargar = new JButton("Cargar");
+		btnCargar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cargarProductos();
+			}
+		});
+		btnCargar.setBounds(140, 275, 84, 20);
+		add(btnCargar);
 
 	}
 
 	public void actionPerformed(ActionEvent e) {
 	}
+	private void mostrarLista() {
+		textArea.setText("--- Lista de Productos Actualizada ---\n");
+		for (Products p : lista) {
+			textArea.append("ID: " + p.getId() + " | Producto: " + p.getProd()
+					+ " | Tipo: " + p.getTipo() + " | Precio Venta: " + p.getPrec()
+					+ " | Stock: " + p.getStock() + "\n [!!!] Costo de compra: " + p.getCosto() + "\n");
+		}
+	}
+	private void limpiarCampos() {
+		txtId.setText("");
+		txtProd.setText("");
+		txtPrecio.setText("");
+		txtStock.setText("");
+		txtCosto.setText("");
+		comboSelect.setSelectedIndex(0);
+	}
+	  public void setCompras(Compras c) {
+			this.compras = c;
+		}
 }

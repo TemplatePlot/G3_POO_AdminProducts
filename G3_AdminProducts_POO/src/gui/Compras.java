@@ -59,15 +59,32 @@ public class Compras extends JPanel {
         JButton btnEliminarCanasta = new JButton("Eliminar");
         btnEliminarCanasta.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+            	String idEliminar = comprarId.getText().trim();
+            	canasta.removeIf(item -> item.producto.getId().equals(idEliminar));
+            	mostrarCanasta();
+            	comprarId.setText("");
             }
         });
         btnEliminarCanasta.setBounds(326, 56, 84, 20);
         add(btnEliminarCanasta);
 
         JButton GenerarBoleta = new JButton("Generar Boleta");
-        GenerarBoleta.setBounds(326, 96, 119, 20);
+        GenerarBoleta.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		generarBoleta();
+        	}
+        });
+        GenerarBoleta.setBounds(326, 110, 119, 20);
         add(GenerarBoleta);
+        
+        JButton MostrarCanasta = new JButton("Mostrar Canasta");
+        MostrarCanasta.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		mostrarCanasta();
+        	}
+        });
+        MostrarCanasta.setBounds(21, 127, 119, 20);
+        add(MostrarCanasta);
 
     }
     private void agregarProducs() {
@@ -144,4 +161,23 @@ public class Compras extends JPanel {
 		}
 		return total;
 	}
+	private void generarBoleta() {
+		if (canasta.isEmpty()) {
+			textArea.setText("Error: la canasta está vacía.\n");
+			return;
+		}
+		StringBuilder boleta = new StringBuilder("===== BOLETA =====\n");
+		for (ItemCanasta item : canasta) {
+			double subtotal = item.producto.getPrec() * item.cantidad;
+			boleta.append(item.producto.getProd()).append(" x").append(item.cantidad)
+			      .append(" = ").append(subtotal).append("\n");
+			item.producto.setStock(item.producto.getStock() - item.cantidad);
+		}
+		boleta.append("------------------\nTOTAL: ").append(calcularTotal());
+		textArea.setText(boleta.toString());
+		canasta.clear();
+	}
+	public void vaciarCanasta() { 
+		canasta.clear(); 
+		}
 }
