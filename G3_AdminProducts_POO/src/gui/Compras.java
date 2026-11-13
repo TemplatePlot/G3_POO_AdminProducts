@@ -36,7 +36,7 @@ public class Compras extends JPanel {
 
 		this.lista = lista;
 		setLayout(null);
-
+		setBackground(new java.awt.Color(100, 112, 206));
 		textArea = new JTextArea();
 		textArea.setEditable(false);
 		textArea.setBounds(21, 157, 405, 143);

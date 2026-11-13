@@ -45,6 +45,7 @@ public class MainWindow extends JFrame {
 	public MainWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 522, 355);
+		
 		MAINW Prods = new MAINW();
 		Compras Comp = new Compras(Prods.getLista());
 		Prods.setCompras(Comp);
@@ -91,6 +92,7 @@ public class MainWindow extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
+		contentPane.setBackground(new Color(224, 255, 255));
 		nuevoPanel(contentPane);
 
 		JLabel lblBienvenida = new JLabel("Bienvenido a Admin Products");
