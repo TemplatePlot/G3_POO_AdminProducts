@@ -48,6 +48,8 @@ public class MainWindow extends JFrame {
 		MAINW Prods = new MAINW();
 		Compras Comp = new Compras(Prods.getLista());
 		Prods.setCompras(Comp);
+		Ingresos Ing = new Ingresos();
+		Ing.setVentas(Comp.getVentas());
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -72,6 +74,11 @@ public class MainWindow extends JFrame {
 		mnNewMenu.add(mntmNewMenuItem_1);
 
 		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Ganancias");
+		mntmNewMenuItem_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				nuevoPanel(Ing);
+			}
+		});
 		mnNewMenu.add(mntmNewMenuItem_2);
 		
 		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Ventana principal");
@@ -128,6 +135,12 @@ public class MainWindow extends JFrame {
 		contentPane.add(btnCompras);
 
 		JButton btnIngresos = new JButton("");
+		btnIngresos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Botón Ingresos presionado");
+				nuevoPanel(Ing);
+			}
+		});
 		btnIngresos.setBounds(297, 163, 94, 64);
 		ImageIcon iconoingresos = new ImageIcon(getClass().getResource("/Imagenes/ingresos.png"));
 		Image imageningresos = iconoingresos.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);

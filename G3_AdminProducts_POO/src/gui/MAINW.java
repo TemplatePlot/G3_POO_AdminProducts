@@ -36,25 +36,26 @@ public class MAINW extends JPanel implements ActionListener {
 	
 	  private void guardarProductos() {
 		   	JFileChooser chooser = new JFileChooser();
-		   	chooser.setDialogTitle("Guardar lista de productos");
+		   	chooser.setDialogTitle("Guardar lista de productos"); 
 		   	chooser.setSelectedFile(new File("productos.txt"));
-		   	if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
+		   	if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;  //Crea el archivo
 
 		   	File destino = chooser.getSelectedFile();
 		   	if (destino.exists()) {
 		   		int r = JOptionPane.showConfirmDialog(this,
 		   				"El archivo ya existe. ¿Desea sobrescribirlo?",
 		   				"Confirmar", JOptionPane.YES_NO_OPTION);
-		   		if (r != JOptionPane.YES_OPTION) return;
+		   		if (r != JOptionPane.YES_OPTION) return; //Reescribe el archivo
 		   	}
 
 		   	try (PrintWriter pw = new PrintWriter(destino)) {
 		   		for (Products p : lista) {
 		   			pw.println(p.getId() + ";" + p.getProd() + ";" + p.getTipo() + ";"
-		   					+ p.getStock() + ";" + p.getPrec() + ";" + p.getCosto());
+		   					+ p.getStock() + ";" + p.getPrec() + ";" + p.getCosto()); //Escribe todos los productos registrados al archivo con un for
 		   		}
+		   	   if (compras != null) compras.guardarVentas(archivoVentasDe(destino));
 		   		archivoActual = destino;
-		   		textArea.setText("Lista guardada en " + destino.getAbsolutePath() + " (" + lista.size() + " registros).\n");
+		   		textArea.setText("Lista guardada en " + destino.getAbsolutePath() + " (" + lista.size() + " registros).\n"); // Muestra la cantidad de registros guardados
 		   	} catch (IOException ex) {
 		   		textArea.setText("Error al guardar: " + ex.getMessage() + "\n");
 		   	}
@@ -87,9 +88,21 @@ public class MAINW extends JPanel implements ActionListener {
 		   	lista.clear();
 		   	lista.addAll(cargada);
 		    if (compras != null) compras.vaciarCanasta();
+		    try {
+		       	if (compras != null) compras.cargarVentas(archivoVentasDe(origen));
+		       } catch (IOException | NumberFormatException | ArrayIndexOutOfBoundsException ex) {
+		       	textArea.append("\nAviso: no se pudieron cargar las ventas (" + ex.getMessage() + ").\n");
+		       }
 		   	archivoActual = origen;
 		   	mostrarLista();
 		   	textArea.append("\nCargada: " + origen.getName() + " (" + lista.size() + " productos).\n");
+		   }
+	   private File archivoVentasDe(File base) {
+		   	String nombre = base.getName();
+		   	if (nombre.toLowerCase().endsWith(".txt")) {
+		   		nombre = nombre.substring(0, nombre.length() - 4);
+		   	}
+		   	return new File(base.getParentFile(), nombre + "_ventas.txt");
 		   }
 	
 	public ArrayList<Products> getLista() { // Permite vincular datos para ser usados en otras ventanas como Compras
@@ -337,7 +350,7 @@ public class MAINW extends JPanel implements ActionListener {
 		textArea.setText("--- Lista de Productos Actualizada ---\n");
 		for (Products p : lista) {
 			textArea.append("ID: " + p.getId() + " | Producto: " + p.getProd()
-					+ " | Tipo: " + p.getTipo() + " | Precio Venta: " + p.getPrec()
+					+ "\n | Tipo: " + p.getTipo() + " | Precio Venta: " + p.getPrec()
 					+ " | Stock: " + p.getStock() + "\n [!!!] Costo de compra: " + p.getCosto() + "\n");
 		}
 	}
