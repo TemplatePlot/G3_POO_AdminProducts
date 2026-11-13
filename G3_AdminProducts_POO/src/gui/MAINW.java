@@ -120,7 +120,7 @@ public class MAINW extends JPanel implements ActionListener {
 			setLayout(null);
 			setLayout(null);
 		}
-
+		setBackground(new java.awt.Color(100, 112, 206));
 		JLabel lblNewLabel_2 = new JLabel("ID");
 		lblNewLabel_2.setBounds(26, 26, 44, 12);
 		add(lblNewLabel_2);

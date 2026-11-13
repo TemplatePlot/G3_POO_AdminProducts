@@ -27,7 +27,7 @@ public class Ingresos extends JPanel {
 		ventas = new ArrayList<>();
 		
 		setLayout(null);
-		
+		setBackground(new java.awt.Color(100, 112, 206));
 		 areaResultado = new JTextArea();
 		 areaResultado.setWrapStyleWord(true);
 		  areaResultado.setEditable(false);
