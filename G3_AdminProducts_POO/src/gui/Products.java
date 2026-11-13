@@ -2,17 +2,20 @@ package gui;
 
 public class Products {
 
-	public String id, prod, tipo;
-	public int stock;
-	public double prec;
-	public Products(String id, String prod, String tipo, int stock, double prec) {
-		super();
+	private String id, prod, tipo;
+	private int stock;
+	private double prec;
+	private double costo;
+	
+	public Products(String id, String prod, String tipo, int stock, double prec, double costo) {
 		this.id = id;
 		this.prod = prod;
 		this.tipo = tipo;
 		this.stock = stock;
 		this.prec = prec;
+		this.costo = costo;
 	}
+	
 	public String getId() {
 		return id;
 	}
@@ -42,6 +45,14 @@ public class Products {
 	}
 	public void setPrec(double prec) {
 		this.prec = prec;
+	}
+
+	public double getCosto() {
+		return costo;
+	}
+
+	public void setCosto(double costo) {
+		this.costo = costo;
 	}
 	
 	
